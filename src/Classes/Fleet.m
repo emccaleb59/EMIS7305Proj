@@ -31,7 +31,7 @@ classdef Fleet < handle
             n=1;
             while n<=obj.NumAircraft
                 obj.AircraftArray{n}=Aircraft(obj.StartHoursPerAircraft,0);
-                obj.AircraftArray{n}.AssignAircraftAvail(obj.AircraftRfunction,obj.AircraftRepairTime)
+                obj.AircraftArray{n}.AssignAircraftavail(obj.AircraftRfunction,obj.AircraftRepairTime)
                 n=n+1;
             end
         end
@@ -49,7 +49,8 @@ classdef Fleet < handle
         function ageaircraft(obj,flighthours)
            n=1;
            while n<= obj.NumAircraft 
-               ojb.AircraftArray{n}.ageaircraft(flighthours);
+               obj.AircraftArray{n}.ageaircraft(flighthours);
+               n=n+1;
            end
         end
     end

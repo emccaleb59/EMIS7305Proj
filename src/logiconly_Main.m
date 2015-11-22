@@ -56,7 +56,7 @@ aircraftavailforplot=[];
 while DAY<=NUMBEROFDAYSOFCONCERN
     daysforplot{DAY}=DAY;
     
-    aircraftavail=userfleet.getavailabileaircraft;
+    aircraftavail=userfleet.getavailaircraft;
     aircraftavailforplot{DAY}=aircraftavail;
     
     userfleet.ageaircraft(FLEETFLIGHTHOURSPERDAY)    
