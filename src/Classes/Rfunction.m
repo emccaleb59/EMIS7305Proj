@@ -45,7 +45,7 @@ classdef Rfunction < handle
                         error('Beta must be a positive number')
                     end
                 case 5
-                    obj.FunctionType = 'Zero'
+                    obj.FunctionType = 'Zero';
                 otherwise
                     error('Value passed to Rfunction out of scope')
             end
@@ -57,11 +57,11 @@ classdef Rfunction < handle
                case 'Exponential'
                    out=exp(-(hours/obj.Theta));
                case 'Normal'
-                   out = 0.5;
+                   out = 1 - normcdf(hours,obj.Mu,obj.Sigma);
                case 'LogNormal'
-                   out=0.5;
+                   out=1 - logncdf(x,obj.Mu,obj.Sigma);
                case 'Weibull'
-                   out=0.5;
+                   out=exp(-((hours/obj.Theta)^obj.Beta));
                case 'Zero'
                    out = 0.0;
                otherwise
