@@ -1,4 +1,4 @@
-classdef Rfunciton < handle
+classdef Rfunction < handle
     %RFUNCITON Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -51,7 +51,24 @@ classdef Rfunciton < handle
             end
         end
         
-        function 
+        function out = Rvalue(obj,hours)
+            %outputs reliability percent based on hours flows
+           switch obj.FunctionType 
+               case 'Exponential'
+                   out=exp(-(hours/obj.Theta));
+               case 'Normal'
+                   out = 0.5;
+               case 'LogNormal'
+                   out=0.5;
+               case 'Weibull'
+                   out=0.5;
+               case 'Zero'
+                   out = 0.0;
+               otherwise
+                   error('no rfunction')
+                   
+           end
+        end
     end
     
 end
