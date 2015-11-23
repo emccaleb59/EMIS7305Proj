@@ -1,0 +1,17 @@
+Assumptions List
+
+Materials in inventory are not replaced over the time period of program analysis.
+
+Aircraft has background reliability curve in series with known problem reliability curve.
+
+All aircraft currently treated as if they fly a fixed average number of hours per day.
+
+All aircraft currently treated as if starting with same number of hours on the airframe.
+
+Aircraft currently resume exact same curve after repair from baseline aircraft reliability failure.
+
+Each aircraft is examined individually by the code so most of these assumptions could be easily loaded from a database with ~500lines
+additional code per item stated above.
+
+
+

@@ -15,7 +15,7 @@ AFFLICTEDAIRCRAFT= 0;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
-THETAAC=2000;
+THETAAC=2500;
 BASELINEFUNCTION=Rfunction(BASELINEFUNCTIONTYPE,0,0,0,THETAAC);
 %average number of hours on each aircraft in the fleet.
 AVERAGEFLEETHOURS=100;
@@ -23,7 +23,7 @@ AVERAGEFLEETHOURS=100;
 %number of days aircraft will be down for average maintenance
 BASELINEAIRCRAFTMAINT=2;
 
-FLEETFLIGHTHOURSPERDAY=3;
+FLEETFLIGHTHOURSPERDAY=1.5;
 %--------------------------------------------------------------------
 
 %Prerepair -----------------------------------------------------------
@@ -43,10 +43,13 @@ MINAVAILABILITY=15;
 
 NUMBEROFDAYSOFCONCERN=60;
 
-PERCENTILERESULTBETTER=90;
+PERCENTILERESULT=90;
 
 
-
+%all of this should be incased in a while loop for the monte carlo runs
+% the days for plot generation should be pulled out and automatically
+% generated Jessey how to auotmatically gennerate an array 1... Num days
+% without a loop
 userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
 userfleet.initfleet;
 DAY=1;
@@ -66,5 +69,9 @@ while DAY<=NUMBEROFDAYSOFCONCERN
 end
 
 
+%after montecarlo array is generated average the columns or otherwise find
+%nth percentile for each day then plot results
+
 fig1=figure
+plot(MINAVAILABILITY,daysforplot)
 plot(daysforplot,aircraftavailforplot)
