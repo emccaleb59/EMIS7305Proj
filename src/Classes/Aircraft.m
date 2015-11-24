@@ -10,7 +10,7 @@ classdef Aircraft < handle
         IsRepaired
         
         %hours on repair
-        PostRepairHours
+        AfflictedRepairTime
         
         %aircraft currently flight ready
         IsUp
@@ -28,8 +28,7 @@ classdef Aircraft < handle
         AircraftAvailfunc
         AircraftRepairtime
         
-        PreRepairfunc
-        
+        PreRepairfunc        
         PostRepairfunc
         
         
@@ -59,6 +58,12 @@ classdef Aircraft < handle
             obj.AircraftAvailfunc=func;
             obj.AircraftRepairtime=repairtime;
             
+        end
+        
+        function AssignAfflictedFunc(obj,prefunc,postfunc,repairtime)
+            obj.PreRepairfunc=prefunc;        
+            obj.PostRepairfunc=postfunc;
+            obj.AfflictedRepairTime=repairtime;
         end
         
         function ageaircraft(obj,hours)

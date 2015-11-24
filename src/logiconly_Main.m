@@ -11,7 +11,7 @@ NUMBERRUN=100;
 FLEETAIRCRAFT = 30;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= 0;
+AFFLICTEDAIRCRAFT= 2;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
@@ -30,11 +30,19 @@ FLEETFLIGHTHOURSPERDAY=1.5;
 %reliability curve before application of repair on afflicted aircraft
 %zero means aircraft is grounded by discrepancy
 PREREPAIRFUNCTIONTYPE=5;
+REPAIRTIMEBASE=3;
+
+
+PREREPAIRFUNCTION=Rfunction(PREREPAIRFUNCTIONTYPE,0,0,0,0);
 
 
 %Repair Function--------------------------
 %what the repair's reliability curve looks like
-POSTREPAIRFUNCTION=2;
+POSTREPAIRFUNCTIONTYPE=2;
+POSTRFMU=2000;
+POSTRFSIGMA=150;
+POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,0,0);
+
 
 %------------------
 
@@ -49,9 +57,23 @@ PERCENTILERESULT=90;
 %all of this should be incased in a while loop for the monte carlo runs
 % the days for plot generation should be pulled out and automatically
 % generated Jessey how to auotmatically gennerate an array 1... Num days
-% without a loop
+% without a loop also how to preallocate variable size.
 userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
 userfleet.initfleet;
+
+n=1;
+
+while n<=AFFLICTEDAIRCRAFT
+    %This section could in the future apply diffreing discrepancies to
+    %differing aircraft. Right now only one discrepancy type is considered.
+    
+    
+   %check materials availability and apply leadtimes to REPAIRTIMEBASE in
+   %the near future 
+   userfleet.SetDiscrepancyAndrepair(n,PREREPAIRFUNCTION,POSTREPAIRFUNCTION,REPAIRTIMEBASE);
+   n=n+1;
+end
+
 DAY=1;
 daysforplot=[];
 aircraftavailforplot=[];

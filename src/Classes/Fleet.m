@@ -26,12 +26,20 @@ classdef Fleet < handle
             obj.AircraftRepairTime=AircraftRepairtime;
         end
         
+        function SetDiscrepancyAndrepair(obj,AircraftNumber,PreRepairfunc,postrepairfun,repairtime)
+            obj.AircraftArray{AircraftNumber}.AssignAfflictedFunc(PreRepairfunc,postrepairfun,repairtime)
+        end
+        
         function initfleet(obj)
-            %CREATES FLEET currently creates all aircraft without
-            %discrepancy 
-            %Need to add discrepancy handling.
+            %CREATES FLEET 
             %currently only handles one discrepancy type but could be
+            %expanded for future**
             n=1;
+            while n<=obj.NumAfflictedAircraft
+                obj.AircraftArray{n}=Aircraft(obj.StartHoursPerAircraft,1);
+                obj.AircraftArray{n}.AssignAircraftavail(obj.AircraftRfunction,obj.AircraftRepairTime)
+                n=n+1;
+            end
             while n<=obj.NumAircraft
                 obj.AircraftArray{n}=Aircraft(obj.StartHoursPerAircraft,0);
                 obj.AircraftArray{n}.AssignAircraftavail(obj.AircraftRfunction,obj.AircraftRepairTime)
