@@ -10,7 +10,9 @@ classdef Aircraft < handle
         IsRepaired
         
         %hours on repair
-        AfflictedRepairTime
+        HoursSinceRepair
+        HoursonDiscrepancy
+        
         
         %aircraft currently flight ready
         IsUp
@@ -31,7 +33,7 @@ classdef Aircraft < handle
         PreRepairfunc        
         PostRepairfunc
         
-        
+        AfflictedRepairTime
     end
     
     methods
@@ -51,7 +53,10 @@ classdef Aircraft < handle
             obj.IsUp=1;
                  
             obj.IsAfflicted=afflicted;
-            
+            if afflicted ==1
+                obj.IsRepaired=0;
+                obj.HoursonDiscrepancy=0;
+            end
         end
         
         function AssignAircraftavail(obj,func,repairtime)
@@ -69,6 +74,11 @@ classdef Aircraft < handle
         function ageaircraft(obj,hours)
             if obj.IsUp == 1
                 obj.AirframeHours = obj.AirframeHours + hours;
+                %need to add logic to track hours on discrepancy or repair
+                %******************************************************
+                %-----More logic needed here for discrepancies to---------
+                %---------work properly------------------------------------
+                %*****************************************************
             else
                 %if aircraft is down advance day and put aircraft back up
                 %when days to repair reaches 0
@@ -103,6 +113,60 @@ classdef Aircraft < handle
                     end
                 else
                     %Aircraft is afflicted by discrepancy logic
+                    if obj.IsRepaired == 0
+                        %Aircraft has not been repaired use prerepair
+                        %reliability
+                        reliabilityac=obj.AircraftAvailfunc.Rvalue(obj.AirframeHours);
+                        reliabilitydisc=obj.PreRepairfunc.Rvalue(obj.HoursonDiscrepancy);
+                        randnumac=rand;
+                        randnumdisc=rand;
+                        if randnumdisc > reliabilitydisc
+                            %aircraft out due to discrepancy 
+                            %need to further discuss our methodology here
+                            %i'm thinking we possibly make the assumption
+                            %that if we have a nonzero prerepair
+                            %reliability curve we fly till we have a
+                            %failure?
+                            obj.IsUp=0;
+                            out=0;
+                            obj.ReasonDown='prediscrep';
+                            obj.DaysTillRepairComplete=obj.AfflictedRepairTime; 
+                        elseif randnumac>reliabilityac
+                            obj.IsUp=0;
+                            out=0;
+                            obj.ReasonDown='aircraft';
+                            obj.DaysTillRepairComplete=obj.AircraftRepairtime;
+                        else
+                            %aircraft is good continue as usual
+                            out=1;
+                        end
+                    else
+                        %aircraft has been repaired use post repair
+                        %availability
+                        reliabilityac=obj.AircraftAvailfunc.Rvalue(obj.AirframeHours);
+                        reliabilitypostdisc=obj.PostRepairfunc.Rvalue(obj.HoursSinceRepair);
+                        randnumac=rand;
+                        randnumpostdisc=rand;
+                        if randnumpostdisc > reliabilitypostdisc
+                            %aircraft out due to discrepancy repair failing
+                            %need to further discuss our methodology here
+                            %i'm thinking we may have to say we just have
+                            %to apply the same repair again
+                            obj.IsUp=0;
+                            out=0;
+                            obj.ReasonDown='postdiscrep';
+                            obj.DaysTillRepairComplete=obj.AfflictedRepairTime; 
+                        elseif randnumac>reliabilityac
+                            obj.IsUp=0;
+                            out=0;
+                            obj.ReasonDown='aircraft';
+                            obj.DaysTillRepairComplete=obj.AircraftRepairtime;
+                        else
+                            %aircraft is good continue as usual
+                            out=1;
+                        end
+                    end
+                    
                 end
             else
                 %aircraft is down at start of day

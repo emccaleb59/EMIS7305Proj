@@ -57,7 +57,7 @@ classdef Fleet < handle
            end
         end
         
-        function ageaircraft(obj,flighthours)
+        function AgeFleet(obj,flighthours)
            n=1;
            while n<= obj.NumAircraft 
                obj.AircraftArray{n}.ageaircraft(flighthours);

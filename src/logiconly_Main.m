@@ -11,7 +11,7 @@ NUMBERRUN=100;
 FLEETAIRCRAFT = 30;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= 2;
+AFFLICTEDAIRCRAFT= 0;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
@@ -84,7 +84,7 @@ while DAY<=NUMBEROFDAYSOFCONCERN
     aircraftavail=userfleet.getavailaircraft;
     aircraftavailforplot{DAY}=aircraftavail;
     
-    userfleet.ageaircraft(FLEETFLIGHTHOURSPERDAY)    
+    userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
     
     
     DAY=DAY+1;
