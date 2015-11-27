@@ -1,4 +1,4 @@
-classdef Rfunciton < handle
+classdef Rfunction < handle
     %RFUNCITON Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -45,13 +45,30 @@ classdef Rfunciton < handle
                         error('Beta must be a positive number')
                     end
                 case 5
-                    obj.FunctionType = 'Zero'
+                    obj.FunctionType = 'Zero';
                 otherwise
                     error('Value passed to Rfunction out of scope')
             end
         end
         
-        function 
+        function out = Rvalue(obj,hours)
+            %outputs reliability percent based on hours flows
+           switch obj.FunctionType 
+               case 'Exponential'
+                   out=exp(-(hours/obj.Theta));
+               case 'Normal'
+                   out = 1 - normcdf(hours,obj.Mu,obj.Sigma);
+               case 'LogNormal'
+                   out=1 - logncdf(x,obj.Mu,obj.Sigma);
+               case 'Weibull'
+                   out=exp(-((hours/obj.Theta)^obj.Beta));
+               case 'Zero'
+                   out = 0.0;
+               otherwise
+                   error('no rfunction')
+                   
+           end
+        end
     end
     
 end
