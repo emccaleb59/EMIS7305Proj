@@ -8,10 +8,10 @@
 NUMBERRUN=100;
 
 %Number of aircraft in local fleet
-FLEETAIRCRAFT = 30;
+FLEETAIRCRAFT = 15;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= 0;
+AFFLICTEDAIRCRAFT= 2;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
@@ -23,7 +23,7 @@ AVERAGEFLEETHOURS=100;
 %number of days aircraft will be down for average maintenance
 BASELINEAIRCRAFTMAINT=2;
 
-FLEETFLIGHTHOURSPERDAY=1.5;
+FLEETFLIGHTHOURSPERDAY=3;
 %--------------------------------------------------------------------
 
 %Prerepair -----------------------------------------------------------

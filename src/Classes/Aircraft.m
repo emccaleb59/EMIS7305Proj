@@ -74,17 +74,26 @@ classdef Aircraft < handle
         function ageaircraft(obj,hours)
             if obj.IsUp == 1
                 obj.AirframeHours = obj.AirframeHours + hours;
-                %need to add logic to track hours on discrepancy or repair
-                %******************************************************
-                %-----More logic needed here for discrepancies to---------
-                %---------work properly------------------------------------
-                %*****************************************************
             else
                 %if aircraft is down advance day and put aircraft back up
                 %when days to repair reaches 0
-                obj.DaysTillRepairComplete=obj.DaysTillRepairComplete -1;
-                if obj.DaysTillRepairComplete ==0
-                    obj.IsUp = 1;
+                if obj.IsAfflicted == 1
+                    if strcmp(obj.ReasonDown,'postdiscrep')
+                        %do nothing aircraft is down from now on.
+                    else 
+                        %age aircraft repair
+                        obj.DaysTillRepairComplete=obj.DaysTillRepairComplete -1;
+                        if obj.DaysTillRepairComplete == 0;
+                            obj.IsUp = 1;
+                            obj.IsRepaired =1;
+                        end
+                    end
+                else
+                    %aircraft reliability repair reason
+                    obj.DaysTillRepairComplete=obj.DaysTillRepairComplete -1;
+                    if obj.DaysTillRepairComplete ==0
+                        obj.IsUp = 1;
+                    end
                 end
             end
         end
