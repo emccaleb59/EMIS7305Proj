@@ -53,44 +53,46 @@ NUMBEROFDAYSOFCONCERN=60;
 
 PERCENTILERESULT=90;
 
+simnumber=1;
+aircraftavailforplot=[];
+daysforplot=1:NUMBEROFDAYSOFCONCERN;
 
+while simnumber <= NUMBERRUN
+    
 %all of this should be incased in a while loop for the monte carlo runs
 % the days for plot generation should be pulled out and automatically
 % generated Jessey how to auotmatically gennerate an array 1... Num days
 % without a loop also how to preallocate variable size.
-userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
-userfleet.initfleet;
+    userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
+    userfleet.initfleet;
 
-n=1;
+    n=1;
 
-while n<=AFFLICTEDAIRCRAFT
+    while n<=AFFLICTEDAIRCRAFT
     %This section could in the future apply diffreing discrepancies to
     %differing aircraft. Right now only one discrepancy type is considered.
     
     
    %check materials availability and apply leadtimes to REPAIRTIMEBASE in
    %the near future 
-   userfleet.SetDiscrepancyAndrepair(n,PREREPAIRFUNCTION,POSTREPAIRFUNCTION,REPAIRTIMEBASE);
-   n=n+1;
+    userfleet.SetDiscrepancyAndrepair(n,PREREPAIRFUNCTION,POSTREPAIRFUNCTION,REPAIRTIMEBASE);
+    n=n+1;
+    end
+
+    DAY=1;
+
+    while DAY<=NUMBEROFDAYSOFCONCERN
+    
+        aircraftavail=userfleet.getavailaircraft;
+        aircraftavailforplot{DAY,simnumber}=aircraftavail;
+    
+        userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
+    
+    
+        DAY=DAY+1;
+    end
+    simnumber = simnumber +1;
 end
-
-DAY=1;
-daysforplot=[];
-aircraftavailforplot=[];
-
-while DAY<=NUMBEROFDAYSOFCONCERN
-    daysforplot{DAY}=DAY;
-    
-    aircraftavail=userfleet.getavailaircraft;
-    aircraftavailforplot{DAY}=aircraftavail;
-    
-    userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
-    
-    
-    DAY=DAY+1;
-end
-
-
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
 
