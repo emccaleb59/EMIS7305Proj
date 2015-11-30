@@ -1,7 +1,7 @@
 function varargout = SiDOT_Main(varargin)
 % SIDOT_MAIN MATLAB code for SiDOT_Main.fig
 %      SIDOT_MAIN, by itself, creates a new SIDOT_MAIN or raises the existing
-%      singleton*.
+%      singleton*. 
 %
 %      H = SIDOT_MAIN returns the handle to a new SIDOT_MAIN or the handle to
 %      the existing singleton*.
