@@ -8,22 +8,22 @@
 NUMBERRUN=100;
 
 %Number of aircraft in local fleet
-FLEETAIRCRAFT = 15;
+FLEETAIRCRAFT = 30;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= 2;
+AFFLICTEDAIRCRAFT= 5;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
 THETAAC=2500;
 BASELINEFUNCTION=Rfunction(BASELINEFUNCTIONTYPE,0,0,0,THETAAC);
 %average number of hours on each aircraft in the fleet.
-AVERAGEFLEETHOURS=100;
+AVERAGEFLEETHOURS=250;
 %if aircraft is down due to it's own reliability curve 
 %number of days aircraft will be down for average maintenance
 BASELINEAIRCRAFTMAINT=2;
 
-FLEETFLIGHTHOURSPERDAY=3;
+FLEETFLIGHTHOURSPERDAY=3.5;
 %--------------------------------------------------------------------
 
 %Prerepair -----------------------------------------------------------

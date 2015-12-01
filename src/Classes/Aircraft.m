@@ -74,6 +74,9 @@ classdef Aircraft < handle
         function ageaircraft(obj,hours)
             if obj.IsUp == 1
                 obj.AirframeHours = obj.AirframeHours + hours;
+                if obj.IsRepaired ==1
+                    obj.HoursSinceRepair = obj.HoursSinceRepair + hours;
+                end
             else
                 %if aircraft is down advance day and put aircraft back up
                 %when days to repair reaches 0
@@ -86,6 +89,7 @@ classdef Aircraft < handle
                         if obj.DaysTillRepairComplete == 0;
                             obj.IsUp = 1;
                             obj.IsRepaired =1;
+                            obj.HoursSinceRepair=0;
                         end
                     end
                 else
