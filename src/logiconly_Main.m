@@ -5,13 +5,13 @@
 %4=wiebull 5=constant zero
 
 %number of montecarlo runs
-NUMBERRUN=100;
+NUMBERRUN=Inputs.MCSamples;
 
 %Number of aircraft in local fleet
-FLEETAIRCRAFT = 15;
+FLEETAIRCRAFT = Inputs.numAAC + Inputs.numUAC;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= 2;
+AFFLICTEDAIRCRAFT= Inputs.numUAC;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
@@ -23,7 +23,7 @@ AVERAGEFLEETHOURS=100;
 %number of days aircraft will be down for average maintenance
 BASELINEAIRCRAFTMAINT=2;
 
-FLEETFLIGHTHOURSPERDAY=3;
+FLEETFLIGHTHOURSPERDAY=Inputs.avgDur;
 %--------------------------------------------------------------------
 
 %Prerepair -----------------------------------------------------------
@@ -38,20 +38,22 @@ PREREPAIRFUNCTION=Rfunction(PREREPAIRFUNCTIONTYPE,0,0,0,0);
 
 %Repair Function--------------------------
 %what the repair's reliability curve looks like
-POSTREPAIRFUNCTIONTYPE=2;
-POSTRFMU=2000;
-POSTRFSIGMA=150;
-POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,0,0);
+POSTREPAIRFUNCTIONTYPE=Reliability.ModelNum;
+POSTRFMU=Reliability.mu;
+POSTRFSIGMA=Reliability.std;
+POSTRFBETA=Reliability.beta;
+POSTRFTHETA=Reliability.theta;
+POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,POSTRFBETA,POSTRFTHETA);
 
 
 %------------------
 
 %--------------Graph inputs--------------------
-MINAVAILABILITY=15;
+MINAVAILABILITY=Inputs.numACReq;
 
-NUMBEROFDAYSOFCONCERN=60;
+NUMBEROFDAYSOFCONCERN=Inputs.lenDur;
 
-PERCENTILERESULT=90;
+PERCENTILERESULT=Inputs.AvailProb*100;
 
 simnumber=1;
 aircraftavailforplot=[];
@@ -61,7 +63,7 @@ while simnumber <= NUMBERRUN
     
 %all of this should be incased in a while loop for the monte carlo runs
 % the days for plot generation should be pulled out and automatically
-% generated Jessey how to auotmatically gennerate an array 1... Num days
+% generated Jesse how to auotmatically gennerate an array 1... Num days
 % without a loop also how to preallocate variable size.
     userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
     userfleet.initfleet;
@@ -84,7 +86,7 @@ while simnumber <= NUMBERRUN
     while DAY<=NUMBEROFDAYSOFCONCERN
     
         aircraftavail=userfleet.getavailaircraft;
-        aircraftavailforplot{DAY,simnumber}=aircraftavail;
+        aircraftavailforplot(DAY,simnumber)=aircraftavail;
     
         userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
     
@@ -96,6 +98,6 @@ end
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
 
-fig1=figure
+fig1=figure(2)
 plot(MINAVAILABILITY,daysforplot)
 plot(daysforplot,aircraftavailforplot)
