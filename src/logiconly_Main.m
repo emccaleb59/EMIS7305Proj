@@ -59,6 +59,16 @@ simnumber=1;
 aircraftavailforplot=[];
 daysforplot=1:NUMBEROFDAYSOFCONCERN;
 
+materials=MaterialDatabase('data/materialsdata.csv');
+materials.LoadMaterials;
+
+rep1=1;
+afflictedleadtimearray=[];
+while rep1 <= AFFLICTEDAIRCRAFT
+    %needs logic for building leadtimearray
+    rep1 = rep1 + 1;
+end
+
 while simnumber <= NUMBERRUN
     
 %all of this should be incased in a while loop for the monte carlo runs
