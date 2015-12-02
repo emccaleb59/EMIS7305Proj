@@ -90,6 +90,11 @@ end
 descName = 'F35_Panel1';
 set(hObject,'string',descName);
 handles.Inputs.descName = descName;
+handles.Flags.Cost = 0;
+handles.Flags.Schedule = 0;
+handles.Flags.Rel = 0;
+handles.Flags.RelPlot = 0;
+handles.Flags.AvailPlot = 0;
 guidata(hObject,handles);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -305,7 +310,7 @@ guidata(hObject,handles);
 
 % --- Executes on button press in FlagRelReq.
 function FlagRelReq_Callback(hObject, eventdata, handles)
-handles.Flags.Schedule = get(hObject,'Value');
+handles.Flags.Rel = get(hObject,'Value');
 guidata(hObject,handles);
 
 
@@ -571,6 +576,9 @@ end
 if ~exist('handles.Flags.Schedule')
     handles.Flags.Schedule = 0;
 end
+if ~exist('handles.Flags.Reliability')
+    handles.Flags.Schedule = 0;
+end
 
 Flags = handles.Flags;
 Limits = handles.Limits;
@@ -596,4 +604,4 @@ assignin('base','iter',iter);
 
 logiconly_Main
 
-% PlotData
+PlotData
