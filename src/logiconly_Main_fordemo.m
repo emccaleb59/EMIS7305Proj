@@ -5,13 +5,13 @@
 %4=wiebull 5=constant zero
 
 %number of montecarlo runs
-NUMBERRUN=Inputs.MCSamples;
+NUMBERRUN=100;
 
 %Number of aircraft in local fleet
-FLEETAIRCRAFT = Inputs.numAAC + Inputs.numUAC;
+FLEETAIRCRAFT = 15;
 
 %afflicted aircraft with specific damage
-AFFLICTEDAIRCRAFT= Inputs.numUAC;
+AFFLICTEDAIRCRAFT= 2;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
@@ -23,7 +23,7 @@ AVERAGEFLEETHOURS=100;
 %number of days aircraft will be down for average maintenance
 BASELINEAIRCRAFTMAINT=2;
 
-FLEETFLIGHTHOURSPERDAY=Inputs.avgDur;
+FLEETFLIGHTHOURSPERDAY=3;
 %--------------------------------------------------------------------
 
 %Prerepair -----------------------------------------------------------
@@ -38,53 +38,30 @@ PREREPAIRFUNCTION=Rfunction(PREREPAIRFUNCTIONTYPE,0,0,0,0);
 
 %Repair Function--------------------------
 %what the repair's reliability curve looks like
-POSTREPAIRFUNCTIONTYPE=Reliability.ModelNum;
-POSTRFMU=Reliability.mu;
-POSTRFSIGMA=Reliability.std;
-POSTRFBETA=Reliability.beta;
-POSTRFTHETA=Reliability.theta;
-POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,POSTRFBETA,POSTRFTHETA);
+POSTREPAIRFUNCTIONTYPE=2;
+POSTRFMU=2000;
+POSTRFSIGMA=150;
+POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,0,0);
 
-%----------------------------------------------------------------------
-%RepairMaterials
-
-REPAIRMATERIALARRAY=Materials.ForLookup;
-sizeofrepairarray=size(REPAIRMATERIALARRAY);
-NUMMATERIALS=sizeofrepairarray(1);
 
 %------------------
 
 %--------------Graph inputs--------------------
-MINAVAILABILITY=Inputs.numACReq;
+MINAVAILABILITY=15;
 
-NUMBEROFDAYSOFCONCERN=Inputs.lenDur;
+NUMBEROFDAYSOFCONCERN=60;
 
-PERCENTILERESULT=Inputs.AvStandard*100;
+PERCENTILERESULT=90;
 
 simnumber=1;
 aircraftavailforplot=[];
 daysforplot=1:NUMBEROFDAYSOFCONCERN;
 
-materials=MaterialDatabase('data/materialsdata.csv');
-materials.LoadMaterials;
-
-rep1=1;
-afflictedleadtimearray=[];
-
-while rep1 <= AFFLICTEDAIRCRAFT
-    matindex=1;
-    while matindex <=NUMMATERIALS
-        matindex = matindex +1;
-    end
-    %needs logic for building leadtimearray
-    rep1 = rep1 + 1;
-end
-
 while simnumber <= NUMBERRUN
     
 %all of this should be incased in a while loop for the monte carlo runs
 % the days for plot generation should be pulled out and automatically
-% generated Jesse how to auotmatically gennerate an array 1... Num days
+% generated Jessey how to auotmatically gennerate an array 1... Num days
 % without a loop also how to preallocate variable size.
     userfleet=Fleet(FLEETAIRCRAFT,AFFLICTEDAIRCRAFT,AVERAGEFLEETHOURS,BASELINEFUNCTION,BASELINEAIRCRAFTMAINT);
     userfleet.initfleet;
@@ -107,7 +84,7 @@ while simnumber <= NUMBERRUN
     while DAY<=NUMBEROFDAYSOFCONCERN
     
         aircraftavail=userfleet.getavailaircraft;
-        aircraftavailforplot(DAY,simnumber)=aircraftavail;
+        aircraftavailforplot{DAY,simnumber}=aircraftavail;
     
         userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
     
@@ -118,16 +95,3 @@ while simnumber <= NUMBERRUN
 end
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%PLOT ITEMS FOR JESSE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-aircraftavailsorted=sort(aircraftavailforplot,2);
-
-sumarray=sum(aircraftavailsorted,2);
-avgaircraftavail=sumarray/NUMBERRUN;
-
-
-fig1=figure(2)
-plot(MINAVAILABILITY,daysforplot)
-plot(daysforplot,aircraftavailforplot)
