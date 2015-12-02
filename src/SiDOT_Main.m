@@ -22,7 +22,7 @@ function varargout = SiDOT_Main(varargin)
 
 % Edit the above text to modify the response to help SiDOT_Main
 
-% Last Modified by GUIDE v2.5 29-Nov-2015 15:35:06
+% Last Modified by GUIDE v2.5 29-Nov-2015 23:04:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -100,21 +100,53 @@ guidata(hObject,handles);
 % --- Executes on selection change in DescType.
 
 function DescType_Callback(hObject, eventdata, handles)
+Material.PartNums = {};
+Material.PartQuants = {};
 switch get(hObject,'Value')
     case 1
-        descType = 'Pick';
+        descType = 'Pick a Descrepancy'; 
     case 2
-        descType = 'Type 1';
+        descType = 'Panel';
         %Here is where I plan to set defaults for other fields
         %handles.Defaults.Dist = X;
+        Material.PartNums{1} = '2WSH12345-0001';
+        Material.PartQuants{1} = 1;
+        Material.PartNums{2} = 'MS25974';
+        Material.PartQuants{2} = 10;
+        Material.RepDur = 3;
     case 3
-        descType = 'Type 2';
+        descType = 'RadarFail';
+        Material.PartNums{1} = '2ASH12345';
+        Material.PartQuants{1} = 3;
+        Material.RepDur = 3;
+    case 4
+        descType = 'HUDS';
+        Material.PartNums{1} = '2ASH12345';
+        Material.PartQuants{1} = 1;
+        Material.PartNums{2} = '2CSH1256-0002';
+        Material.PartQuants{2} = 1;
+        Material.RepDur = 1;
+    case 5
+        descType = 'Oil';
+        Material.PartNums{1} = 'SI65478';
+        Material.PartQuants{1} = 37;
+        Material.RepDur = 1;
+    case 6
+        descType = 'Rocket';
+        Material.PartNums{1} = 'AMS-9876';
+        Material.PartQuants{1} = 1;
+        Material.RepDur = 3;
     case 7
         descType = 'Custom';
+        CustomDesc;
+        Material.PartNums = evalin('base','PIDs;');
+        Material.PartQuants = evalin('base','PNums;');
+        Material.RepDur = evalin('base','RepDur');
     otherwise
         descType = 'Type UNK';
 end
 handles.Inputs.descType = descType;
+handles.Materials = Material;
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -549,11 +581,13 @@ Reliability.theta = evalin('base','theta;');
 Reliability.mu = evalin('base','mu;');
 Reliability.std = evalin('base','std;');
 
+Materials = handles.Materials;
 %This puts variables into the workspace just in case you need them there...
 assignin('base','Inputs',Inputs);
 assignin('base','Flags',Flags);
 assignin('base','Limits',Limits);
 assignin('base','Reliability',Reliability);
+assignin('base','Materials',Materials);
 assignin('base','iter',iter);
 
 logiconly_Main
