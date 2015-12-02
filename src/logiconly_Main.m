@@ -45,6 +45,12 @@ POSTRFBETA=Reliability.beta;
 POSTRFTHETA=Reliability.theta;
 POSTREPAIRFUNCTION=Rfunction(POSTREPAIRFUNCTIONTYPE,POSTRFMU,POSTRFSIGMA,POSTRFBETA,POSTRFTHETA);
 
+%----------------------------------------------------------------------
+%RepairMaterials
+
+REPAIRMATERIALARRAY=Materials.ForLookup;
+sizeofrepairarray=size(REPAIRMATERIALARRAY);
+NUMMATERIALS=sizeofrepairarray(1);
 
 %------------------
 
@@ -64,7 +70,12 @@ materials.LoadMaterials;
 
 rep1=1;
 afflictedleadtimearray=[];
+
 while rep1 <= AFFLICTEDAIRCRAFT
+    matindex=1;
+    while matindex <=NUMMATERIALS
+        matindex = matindex +1;
+    end
     %needs logic for building leadtimearray
     rep1 = rep1 + 1;
 end
@@ -107,6 +118,15 @@ while simnumber <= NUMBERRUN
 end
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%PLOT ITEMS FOR JESSE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+aircraftavailsorted=sort(aircraftavailforplot,2);
+
+sumarray=sum(aircraftavailsorted,2);
+avgaircraftavail=sumarray/NUMBERRUN;
+
 
 fig1=figure(2)
 plot(MINAVAILABILITY,daysforplot)
