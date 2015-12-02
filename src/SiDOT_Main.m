@@ -582,6 +582,10 @@ Reliability.mu = evalin('base','mu;');
 Reliability.std = evalin('base','std;');
 
 Materials = handles.Materials;
+for i = 1:length(Materials.PartNums)
+    Materials.ForLookup{i,1} = Materials.PartNums{i};
+    Materials.ForLookup{i,2} = Materials.PartQuants{i};
+end
 %This puts variables into the workspace just in case you need them there...
 assignin('base','Inputs',Inputs);
 assignin('base','Flags',Flags);
@@ -591,4 +595,5 @@ assignin('base','Materials',Materials);
 assignin('base','iter',iter);
 
 logiconly_Main
+
 % PlotData
