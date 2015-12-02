@@ -193,7 +193,7 @@ guidata(hObject,handles);
 
 
 function exp_theta_Callback(hObject, eventdata, handles)
-handles.exp.theta = str2double(get(hObject,'String'));
+handles.exp.theta = 1./str2double(get(hObject,'String'));
 guidata(hObject,handles);
 % --- Executes during object creation, after setting all properties.
 function exp_theta_CreateFcn(hObject, eventdata, handles)
