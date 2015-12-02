@@ -59,7 +59,7 @@ classdef Rfunction < handle
                case 'Normal'
                    out = 1 - normcdf(hours,obj.Mu,obj.Sigma);
                case 'LogNormal'
-                   out=1 - logncdf(x,obj.Mu,obj.Sigma);
+                   out=1 - logncdf(hours,obj.Mu,obj.Sigma);
                case 'Weibull'
                    out=exp(-((hours/obj.Theta)^obj.Beta));
                case 'Zero'
