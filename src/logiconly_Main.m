@@ -59,7 +59,7 @@ MINAVAILABILITY=Inputs.numACReq;
 
 NUMBEROFDAYSOFCONCERN=Inputs.lenDur;
 
-PERCENTILERESULT=Inputs.AvailProb*100;
+PERCENTILERESULT=Inputs.AvStandard*100;
 
 simnumber=1;
 aircraftavailforplot=[];
