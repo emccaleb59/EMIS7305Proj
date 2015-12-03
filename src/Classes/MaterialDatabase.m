@@ -3,6 +3,7 @@ classdef MaterialDatabase < handle
         FilePath
         MaterialRawArray
         MaterialList
+        NumMaterials
     end
         
     methods
@@ -16,6 +17,7 @@ classdef MaterialDatabase < handle
             obj.MaterialRawArray = textscan(fid,'%d %s %s %d %d %f','headerlines',1, 'Delimiter',',');
             fclose(fid);
             numMaterials=size(obj.MaterialRawArray{1},1);
+            obj.NumMaterials = numMaterials;
             n=1;
             
             while n <= numMaterials
@@ -27,6 +29,21 @@ classdef MaterialDatabase < handle
                 obj.MaterialList{n}=Material(partnumber,desc,qty,lead,cost);
                 n=n+1;
             end
+        end
+            
+        function out = UseMaterials(obj, partnumber, qty)
+            %outputs an increment to repair time if the material is
+            %used up
+                
+            i=1;
+            while i <= obj.NumMaterials
+                if strcmp(obj.MaterialList{i}.GetPartNumber,partnumber)
+                    out = obj.MaterialList{i}.UseParts(qty);
+                    return
+                end
+                i=i+1;
+            end
+           
                 
         end
         

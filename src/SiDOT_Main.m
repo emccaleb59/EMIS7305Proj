@@ -22,7 +22,7 @@ function varargout = SiDOT_Main(varargin)
 
 % Edit the above text to modify the response to help SiDOT_Main
 
-% Last Modified by GUIDE v2.5 15-Nov-2015 14:53:56
+% Last Modified by GUIDE v2.5 29-Nov-2015 23:04:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,8 +60,8 @@ guidata(hObject, handles);
 
 % UIWAIT makes SiDOT_Main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
- 
-
+ iter = 0;
+assignin('base','iter',iter);
 % --- Outputs from this function are returned to the command line.
 function varargout = SiDOT_Main_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -90,6 +90,11 @@ end
 descName = 'F35_Panel1';
 set(hObject,'string',descName);
 handles.Inputs.descName = descName;
+handles.Flags.Cost = 0;
+handles.Flags.Schedule = 0;
+handles.Flags.Rel = 0;
+handles.Flags.RelPlot = 0;
+handles.Flags.AvailPlot = 0;
 guidata(hObject,handles);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,21 +105,53 @@ guidata(hObject,handles);
 % --- Executes on selection change in DescType.
 
 function DescType_Callback(hObject, eventdata, handles)
+Material.PartNums = {};
+Material.PartQuants = {};
 switch get(hObject,'Value')
     case 1
-        descType = 'Pick';
+        descType = 'Pick a Descrepancy'; 
     case 2
-        descType = 'Type 1';
+        descType = 'Panel';
         %Here is where I plan to set defaults for other fields
         %handles.Defaults.Dist = X;
+        Material.PartNums{1} = '2WSH12345-0001';
+        Material.PartQuants{1} = 1;
+        Material.PartNums{2} = 'MS25974';
+        Material.PartQuants{2} = 10;
+        Material.RepDur = 3;
     case 3
-        descType = 'Type 2';
+        descType = 'RadarFail';
+        Material.PartNums{1} = '2ASH12345';
+        Material.PartQuants{1} = 3;
+        Material.RepDur = 3;
+    case 4
+        descType = 'HUDS';
+        Material.PartNums{1} = '2ASH12345';
+        Material.PartQuants{1} = 1;
+        Material.PartNums{2} = '2CSH1256-0002';
+        Material.PartQuants{2} = 1;
+        Material.RepDur = 1;
+    case 5
+        descType = 'Oil';
+        Material.PartNums{1} = 'SI65478';
+        Material.PartQuants{1} = 37;
+        Material.RepDur = 1;
+    case 6
+        descType = 'Rocket';
+        Material.PartNums{1} = 'AMS-9876';
+        Material.PartQuants{1} = 1;
+        Material.RepDur = 3;
     case 7
         descType = 'Custom';
+        CustomDesc;
+        Material.PartNums = evalin('base','PIDs;');
+        Material.PartQuants = evalin('base','PNums;');
+        Material.RepDur = evalin('base','RepDur');
     otherwise
         descType = 'Type UNK';
 end
 handles.Inputs.descType = descType;
+handles.Materials = Material;
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -193,16 +230,26 @@ guidata(hObject,handles);
 
 
 function length_Dur_Callback(hObject, eventdata, handles)
-handles.Inputs.avgDur = str2double(get(hObject,'String'));
+handles.Inputs.lenDur = str2double(get(hObject,'String'));
 guidata(hObject,handles);
 function length_Dur_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+handles.Inputs.lenDur = str2double(get(hObject,'String'));
+guidata(hObject,handles);
+
+function avgDur_Callback(hObject, eventdata, handles)
 handles.Inputs.avgDur = str2double(get(hObject,'String'));
 guidata(hObject,handles);
 
-
+% --- Executes during object creation, after setting all properties.
+function avgDur_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+handles.Inputs.avgDur = str2double(get(hObject,'String'));
+guidata(hObject,handles);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                        %
@@ -231,17 +278,20 @@ switch get(hObject,'Value')
         RelModel = 'Normal';
         RelMN = 2;
     case 4
-        RelModel = 'Weibull';
+        RelModel = 'LogNormal';
         RelMN = 3;
     case 5
-        RelModel = 'Perfect';
+        RelModel = 'Weibull';
         RelMN = 4;
     otherwise
-        RelModel = 'Unkown';
+        RelModel = 'Perfect';
         RelMN = 999;
 end
+assignin('base','RelMN',RelMN);
+RelDist;
 handles.Inputs.RelModel = RelModel;
 handles.Rel.ModelNum = RelMN;
+handles.Rel.Model = RelModel;
 guidata(hObject,handles);
 % --- Executes during object creation, after setting all properties.
 function RelModel_CreateFcn(hObject, eventdata, handles)
@@ -260,7 +310,7 @@ guidata(hObject,handles);
 
 % --- Executes on button press in FlagRelReq.
 function FlagRelReq_Callback(hObject, eventdata, handles)
-handles.Flags.Schedule = get(hObject,'Value');
+handles.Flags.Rel = get(hObject,'Value');
 guidata(hObject,handles);
 
 
@@ -328,7 +378,7 @@ function numElsSeries_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','black');
 end
 
 
@@ -360,7 +410,7 @@ function numElsAP_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','black');
 end
 
 
@@ -392,7 +442,7 @@ function numElsRN_r_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','black');
 end
 
 
@@ -415,68 +465,98 @@ function numElsRN_n_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+    set(hObject,'BackgroundColor','black');
 end
 
 
-
-
-
-
-function avgDur_Callback(hObject, eventdata, handles)
-% hObject    handle to avgDur (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of avgDur as text
-%        str2double(get(hObject,'String')) returns contents of avgDur as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function avgDur_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to avgDur (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                        %
+%% Output Inputs                                         %
+%                                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --- Executes on button press in PlotFlagRel.
 function PlotFlagRel_Callback(hObject, eventdata, handles)
-% hObject    handle to PlotFlagRel (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of PlotFlagRel
+handles.Flags.RelPlot = get(hObject,'Value');
+guidata(hObject,handles);
 
 
 % --- Executes on button press in PlotAvailFlag.
 function PlotAvailFlag_Callback(hObject, eventdata, handles)
-% hObject    handle to PlotAvailFlag (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of PlotAvailFlag
-
+handles.Flags.AvailPlot = get(hObject,'Value');
+guidata(hObject,handles);
 
 % --- Executes on button press in FlagOptimizer.
 function FlagOptimizer_Callback(hObject, eventdata, handles)
-% hObject    handle to FlagOptimizer (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+handles.Flags.OptPlot = get(hObject,'Value');
+guidata(hObject,handles);
 
-% Hint: get(hObject,'Value') returns toggle state of FlagOptimizer
 
+% --- Executes on selection change in AvailProb.
+function AvailProb_Callback(hObject, eventdata, handles)
+% handles.Inputs.AvModel = get(hObject,'Value');
+
+switch get(hObject,'Value')
+    case 1
+        AvModel = 'Pick Availability Standard';
+        AvStandard = 0;
+    case 2
+        AvModel = 'Mean';
+        AvStandard = 0;
+    case 3
+        AvModel = 'Median';
+        AvStandard = .5;
+    case 4
+        AvModel = '75th Percentile';
+        AvStandard = .75;
+    case 5
+        AvModel = '90th Percentile';
+        AvStandard = .90;
+    case 6
+        AvModel = '95th Percentile';
+        AvStandard = .95;
+    case 7
+        AvModel = '99th Percentile';
+        AvStandard = .99;
+end
+handles.Inputs.AvStandard = AvStandard;
+handles.Inputs.AvDesc = AvModel;
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function AvailProb_CreateFcn(hObject, eventdata, handles)
+handles.Inputs.AvStandard = 999;
+handles.Inputs.AvDesc = 'Need to Select Avail Model';
+guidata(hObject,handles);
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+handles.Inputs.AvailProb = 0;
+guidata(hObject,handles);
+
+
+function MC_Samples_Callback(hObject, eventdata, handles)
+handles.Inputs.MCSamples= str2double(get(hObject,'String'));
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function MC_Samples_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+handles.Inputs.MCSamples= str2double(get(hObject,'String'));
+guidata(hObject,handles);
 
 % --- Executes on button press in ClearPlots.
 function ClearPlots_Callback(hObject, eventdata, handles)
-% hObject    handle to ClearPlots (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
+close(1)
+close(2)
+iter = 0;
+assignin('base','iter',iter);
 
 
 % --- Executes on button press in SavePlots.
@@ -485,34 +565,39 @@ function SavePlots_Callback(hObject, eventdata, handles)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                        %
 %% Start Calculations                                    %
-%Evan: start here                                       %
+%                                                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --- Executes on button press in MakeCompare.
 function MakeCompare_Callback(hObject, eventdata, handles)
+iter = evalin('base','iter;')+1;
+assignin('base','iter',iter);
+if iter == 1
+    assignin('base','RlegStr',{});
+    assignin('base','AlegStr',{});
+end
 
 Flags = handles.Flags;
 Limits = handles.Limits;
+Inputs = handles.Inputs;
 Reliability = handles.Rel;
+Reliability.beta = evalin('base','beta;');
+Reliability.theta = evalin('base','theta;');
+Reliability.mu = evalin('base','mu;');
+Reliability.std = evalin('base','std;');
 
-%Here i'm being lazy...eventually these will be pulled from other GUIs
-
-if Reliability.ModelNum == 1
-    Reliability.theta = 1;
-elseif Reliability.ModelNum == 2
-    Reliability.sigma = 1;
-    Reliability.mu = 5;
-elseif Reliability.ModelNum == 3
-    Reliability.sigma = log(1);
-    Reliability.mu = log(5);
-elseif Reliability.ModelNum == 4
-    Reliability.theta = 1;
-    Reliability.beta = 100;
-else
-    Reliability.wtf = 999;
+Materials = handles.Materials;
+for i = 1:length(Materials.PartNums)
+    Materials.ForLookup{i,1} = Materials.PartNums{i};
+    Materials.ForLookup{i,2} = Materials.PartQuants{i};
 end
 %This puts variables into the workspace just in case you need them there...
 assignin('base','Inputs',Inputs);
 assignin('base','Flags',Flags);
 assignin('base','Limits',Limits);
 assignin('base','Reliability',Reliability);
+assignin('base','Materials',Materials);
+assignin('base','iter',iter);
 
+logiconly_Main
+
+PlotData
