@@ -109,13 +109,27 @@ while simnumber <= NUMBERRUN
         aircraftavail=userfleet.getavailaircraft;
         aircraftavailforplot(DAY,simnumber)=aircraftavail;
     
-        userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
+        userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY);    
     
     
         DAY=DAY+1;
     end
     simnumber = simnumber +1;
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%RELIABILITY CALCULATION%%%%%%%%%%%%%%%%%%%%%
+day =1;
+aircraftreliability=[];
+discrepantreliability=[];
+combinedreliability=[];
+while day <=NUMBEROFDAYSOFCONCERN
+    hours = AVERAGEFLEETHOURS + day*FLEETFLIGHTHOURSPERDAY;
+    repairhours= day*FLEETFLIGHTHOURSPERDAY;
+    aircraftreliability(day)=BASELINEFUNCTION.Rvalue(hours);
+    discrepantreliability(day)=BASELINEFUNCTION.Rvalue(repairhours);
+    combinedreliability(day)=aircraftreliability(day)*discrepantreliability(day);
+    day = day + 1;
+end
+
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
 
