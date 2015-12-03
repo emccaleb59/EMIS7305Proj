@@ -118,7 +118,7 @@ while simnumber <= NUMBERRUN
         aircraftavail=userfleet.getavailaircraft;
         aircraftavailforplot(DAY,simnumber)=aircraftavail;
     
-        userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY)    
+        userfleet.AgeFleet(FLEETFLIGHTHOURSPERDAY);    
     
     
         DAY=DAY+1;
