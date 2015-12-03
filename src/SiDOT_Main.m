@@ -143,7 +143,7 @@ switch get(hObject,'Value')
         Material.RepDur = 3;
     case 7
         descType = 'Custom';
-        CustomDesc;
+        uiwait(CustomDesc);
         Material.PartNums = evalin('base','PIDs;');
         Material.PartQuants = evalin('base','PNums;');
         Material.RepDur = evalin('base','RepDur');
