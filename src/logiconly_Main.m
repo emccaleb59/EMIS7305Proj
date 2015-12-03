@@ -69,14 +69,22 @@ materials=MaterialDatabase('data/materialsdata.csv');
 materials.LoadMaterials;
 
 rep1=1;
-afflictedleadtimearray=[];
+afflictedrepairtimearray=[];
 
 while rep1 <= AFFLICTEDAIRCRAFT
     matindex=1;
+    highestleadtime=0;
+    afflictedrepairtimearray(rep1)=REPAIRTIMEBASE;
     while matindex <=NUMMATERIALS
+        qty=REPAIRMATERIALARRAY(matindex,2);
+        pn=REPAIRMATERIALARRAY(matindex,1);
+        leadtime=materials.UseMaterials(pn,qty{1});
+        if leadtime >= highestleadtime
+            highestleadtime=leadtime;
+            afflictedrepairtimearray(rep1)=REPAIRTIMEBASE+highestleadtime;
+        end
         matindex = matindex +1;
     end
-    %needs logic for building leadtimearray
     rep1 = rep1 + 1;
 end
 
@@ -98,8 +106,8 @@ while simnumber <= NUMBERRUN
     
    %check materials availability and apply leadtimes to REPAIRTIMEBASE in
    %the near future 
-    userfleet.SetDiscrepancyAndrepair(n,PREREPAIRFUNCTION,POSTREPAIRFUNCTION,REPAIRTIMEBASE);
-    n=n+1;
+        userfleet.SetDiscrepancyAndrepair(n,PREREPAIRFUNCTION,POSTREPAIRFUNCTION,afflictedrepairtimearray(n));
+        n=n+1;
     end
 
     DAY=1;
