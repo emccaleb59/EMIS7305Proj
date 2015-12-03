@@ -3,7 +3,8 @@
 %input variables that would come from gui
 %function types 1=exponential 2=normal 3=lognormal
 %4=wiebull 5=constant zero
-
+addpath ./data/
+addpath ./Classes/
 %number of montecarlo runs
 NUMBERRUN=Inputs.MCSamples;
 
@@ -124,19 +125,19 @@ while simnumber <= NUMBERRUN
     end
     simnumber = simnumber +1;
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%RELIABILITY CALCULATION%%%%%%%%%%%%%%%%%%%%%
-day =1;
-aircraftreliability=[];
-discrepantreliability=[];
-combinedreliability=[];
-while day <=NUMBEROFDAYSOFCONCERN
-    hours = AVERAGEFLEETHOURS + day*FLEETFLIGHTHOURSPERDAY;
-    repairhours= day*FLEETFLIGHTHOURSPERDAY;
-    aircraftreliability(day)=BASELINEFUNCTION.Rvalue(hours);
-    discrepantreliability(day)=BASELINEFUNCTION.Rvalue(repairhours);
-    combinedreliability(day)=aircraftreliability(day)*discrepantreliability(day);
-    day = day + 1;
-end
+%%%%%%%%%%%%%%%%%%%%%%%%%%RELIABILITY CALCULATION%%%%%%%%%%%%%%%%%%%%% 
+day =1; 
+aircraftreliability=[]; 
+discrepantreliability=[]; 
+combinedreliability=[]; 
+while day <=NUMBEROFDAYSOFCONCERN 
+    hours = AVERAGEFLEETHOURS + day*FLEETFLIGHTHOURSPERDAY; 
+    repairhours= day*FLEETFLIGHTHOURSPERDAY; 
+    aircraftreliability(day)=BASELINEFUNCTION.Rvalue(hours); 
+    discrepantreliability(day)=BASELINEFUNCTION.Rvalue(repairhours); 
+    combinedreliability(day)=aircraftreliability(day)*discrepantreliability(day); 
+    day = day + 1; 
+end 
 
 %after montecarlo array is generated average the columns or otherwise find
 %nth percentile for each day then plot results
@@ -150,6 +151,6 @@ sumarray=sum(aircraftavailsorted,2);
 avgaircraftavail=sumarray/NUMBERRUN;
 
 
-fig1=figure(2)
-plot(MINAVAILABILITY,daysforplot)
-plot(daysforplot,aircraftavailforplot)
+% fig1=figure(2)
+% plot(MINAVAILABILITY,daysforplot)
+% plot(daysforplot,aircraftavailforplot)

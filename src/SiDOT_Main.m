@@ -552,8 +552,11 @@ guidata(hObject,handles);
 
 % --- Executes on button press in ClearPlots.
 function ClearPlots_Callback(hObject, eventdata, handles)
-evalin('base','plots;');
-close(plots)
+
+close(1)
+close(2)
+iter = 0;
+assignin('base','iter',iter);
 
 
 % --- Executes on button press in SavePlots.
@@ -571,13 +574,6 @@ assignin('base','iter',iter);
 if iter == 1
     assignin('base','RlegStr',{});
     assignin('base','AlegStr',{});
-end
-
-if ~exist('handles.Flags.Schedule')
-    handles.Flags.Schedule = 0;
-end
-if ~exist('handles.Flags.Reliability')
-    handles.Flags.Schedule = 0;
 end
 
 Flags = handles.Flags;
