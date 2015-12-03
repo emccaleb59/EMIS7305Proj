@@ -5,10 +5,10 @@ i = 1;
 
 
 RelPlotDays = 0:1:Inputs.lenDur;
-AvailPlotDays = RelPlotDays;
+AvailPlotDays = 0:1:Inputs.lenDur;
 
-BaseACRelPlot = [1.0 aircraftreliability];
-RepairACRelPlot = [1.0 discrepantreliability];
+BaseACRelPlot = [aircraftreliability(1) aircraftreliability];
+RepairACRelPlot = [combinedreliability(1) combinedreliability];
 
 if Inputs.AvStandard > 0
     indexAvail = floor((1-Inputs.AvStandard) * Inputs.MCSamples);
@@ -51,7 +51,7 @@ if Flags.RelPlot
     xlabel('Mission Days')
     ylabel('Single Aircraft Reliability')
     
-    RlegStr{iter+1+Flags.Rel} = [num2str(iter),'-',Inputs.RelModel];
+    RlegStr{iter+1+Flags.Rel} = ['Case ',num2str(iter),' - ',Inputs.RelModel];
     assignin('base','RlegStr',RlegStr);
     legend(RlegStr,'Location','SouthEast')
     i = i + 1;
@@ -72,7 +72,7 @@ if Flags.AvailPlot
             AlegStr{2} = 'Schedule Requirement';
         end
     end
-    AlegStr{iter+Flags.Schedule+1} = [num2str(iter),'-',Inputs.RelModel,' ',Inputs.AvDesc];
+    AlegStr{iter+Flags.Schedule+1} = ['Case ',num2str(iter),'-',Inputs.RelModel,' ',Inputs.AvDesc];
     assignin('base','AlegStr',AlegStr);
     plot(AvailPlotDays,AvailPlot,cell2mat(pc(iter)))
     xlim([0 Inputs.lenDur]),ylim([0 max(max(aircraftavailforplot))+2])
