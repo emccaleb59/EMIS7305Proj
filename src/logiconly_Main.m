@@ -16,7 +16,7 @@ AFFLICTEDAIRCRAFT= Inputs.numUAC;
 
 %baseline aircraft reliability--------------------------------------
 BASELINEFUNCTIONTYPE=1;
-THETAAC=2500;
+THETAAC=3500;
 BASELINEFUNCTION=Rfunction(BASELINEFUNCTIONTYPE,0,0,0,THETAAC);
 %average number of hours on each aircraft in the fleet.
 AVERAGEFLEETHOURS=100;
@@ -31,7 +31,8 @@ FLEETFLIGHTHOURSPERDAY=Inputs.avgDur;
 %reliability curve before application of repair on afflicted aircraft
 %zero means aircraft is grounded by discrepancy
 PREREPAIRFUNCTIONTYPE=5;
-REPAIRTIMEBASE=3;
+REPAIRTIMEBASE=Materials.RepDur;
+
 
 
 PREREPAIRFUNCTION=Rfunction(PREREPAIRFUNCTIONTYPE,0,0,0,0);
